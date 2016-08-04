@@ -26,6 +26,13 @@ MC_CFG_TYPES = {
     3: "BYPASS"
 }
 
+MC_XORFB_TYPES = {
+    0: "DFF",
+    1: "Arithmetic (Carry)",
+    2: "TFF on high",
+    3: "TFF on low"
+}
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("udb_file", type=str, help="The name of the UDB configuration memory binary you want to parse.")
@@ -54,16 +61,31 @@ if __name__ == "__main__":
     for byte in range(0x38, 0x40):
         pld_number = byte & 1
         mc_cfg_type = MC_CFG_TYPES[(byte >> 1) & 3]
-        if udb_config[byte] != 0:
-            print("PLD{}, MC CFG {}: {:#02x}".format(pld_number, mc_cfg_type, udb_config[byte]))
+        # print("PLD{}, MC CFG {}: {:#02x}".format(pld_number, mc_cfg_type, udb_config[byte]))
+        if mc_cfg_type == "CEN_CONST":
             for bit in range(0,8):
                 mc_number = (bit >> 1) & 3
-                if mc_cfg_type == "SET_RESET":
-                    if udb_config[byte] & (1 << bit):
-                        if not (bit & 1):
-                            print("PLD{}, MC{} SET_SEL".format(pld_number, mc_number))
-                        else:
-                            print("PLD{}, MC{} RESET_SEL".format(pld_number, mc_number))
-                if mc_cfg_type == "BYPASS":
-                    if udb_config[byte] & (1 << bit):
-                        print("PLD{}, MC{} BYPASS".format(pld_number, mc_number))
+                mc_cen_const = (udb_config[byte] >> bit) & 1
+                if not (bit & 1):
+                    print("PLD{}, MC{} COEN: {}".format(pld_number, mc_number, mc_cen_const))
+                else:
+                    print("PLD{}, MC{} CONST: {}".format(pld_number, mc_number, mc_cen_const))
+        if mc_cfg_type == "XORFB":
+            for bit in range(0,8,2):
+                mc_number = (bit >> 1) & 3
+                if not (bit & 1):
+                    mc_xorfb_type = MC_XORFB_TYPES[(udb_config[byte] >> bit) & 3]
+                    print("PLD{}, MC{} XORFB: {}".format(pld_number, mc_number, mc_xorfb_type))
+        if mc_cfg_type == "SET_RESET":
+            for bit in range(0,8):
+                mc_number = (bit >> 1) & 3
+                mc_set_reset = (udb_config[byte] >> bit) & 1
+                if not (bit & 1):
+                    print("PLD{}, MC{} SET_SEL: {}".format(pld_number, mc_number, mc_set_reset))
+                else:
+                    print("PLD{}, MC{} RESET_SEL: {}".format(pld_number, mc_number, mc_set_reset))
+        if mc_cfg_type == "BYPASS":
+            for bit in range(0,8,2):
+                mc_number = (bit >> 1) & 3
+                mc_bypass = (udb_config[byte] >> bit) & 1
+                print("PLD{}, MC{} BYPASS: {}".format(pld_number, mc_number, mc_bypass))
