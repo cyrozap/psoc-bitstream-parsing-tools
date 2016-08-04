@@ -55,4 +55,15 @@ if __name__ == "__main__":
         pld_number = byte & 1
         mc_cfg_type = MC_CFG_TYPES[(byte >> 1) & 3]
         if udb_config[byte] != 0:
-            print("MC CFG {}: {:#02x}".format(mc_cfg_type, udb_config[byte]))
+            print("PLD{}, MC CFG {}: {:#02x}".format(pld_number, mc_cfg_type, udb_config[byte]))
+            for bit in range(0,8):
+                mc_number = (bit >> 1) & 3
+                if mc_cfg_type == "SET_RESET":
+                    if udb_config[byte] & (1 << bit):
+                        if not (bit & 1):
+                            print("PLD{}, MC{} SET_SEL".format(pld_number, mc_number))
+                        else:
+                            print("PLD{}, MC{} RESET_SEL".format(pld_number, mc_number))
+                if mc_cfg_type == "BYPASS":
+                    if udb_config[byte] & (1 << bit):
+                        print("PLD{}, MC{} BYPASS".format(pld_number, mc_number))
