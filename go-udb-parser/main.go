@@ -1,5 +1,5 @@
 /*
- * pld-equation-extractor
+ * go-udb-parser
  *
  * Copyright (c) 2016, Forest Crossman <cyrozap@gmail.com>
  *
