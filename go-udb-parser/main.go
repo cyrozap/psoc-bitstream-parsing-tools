@@ -81,8 +81,9 @@ func ParseConfig(u *UDB, config []byte) error {
 		pld := i & 1
 		it := i >> 2
 		tc := (i & 2) != 0
-		for pt := 0; pt < NumProductTerms; pt++ {
-			value := (config[i] & (1 << uint(pt))) != 0
+		var pt uint
+		for pt = 0; pt < NumProductTerms; pt++ {
+			value := (config[i] & (1 << pt)) != 0
 			if tc {
 				u.PLDs[pld].InputTerms[it].True[pt] = value
 			} else {
@@ -94,8 +95,9 @@ func ParseConfig(u *UDB, config []byte) error {
 	for i := 0x30; i < 0x38; i++ {
 		pld := i & 1
 		ot := (i >> 1) & 3
-		for pt := 0; pt < NumProductTerms; pt++ {
-			value := (config[i] & (1 << uint(pt))) != 0
+		var pt uint
+		for pt = 0; pt < NumProductTerms; pt++ {
+			value := (config[i] & (1 << pt)) != 0
 			u.PLDs[pld].ProductTerms[pt].Enabled[ot] = value
 		}
 	}
@@ -103,11 +105,12 @@ func ParseConfig(u *UDB, config []byte) error {
 	for i := 0x38; i < 0x40; i++ {
 		pld := i & 1
 		mct := (i >> 1) & 3
-		for bit := 0; bit < 8; bit++ {
+		var bit uint
+		for bit = 0; bit < 8; bit++ {
 			mc := (bit >> 1) & 3
 			switch mct {
 			case 0: // CEN_CONST
-				cc := (config[i] & (1 << uint(bit))) != 0
+				cc := (config[i] & (1 << bit)) != 0
 				if (bit & 1) == 0 {
 					u.PLDs[pld].Macrocells[mc].COEN = cc
 				} else {
@@ -115,10 +118,10 @@ func ParseConfig(u *UDB, config []byte) error {
 				}
 			case 1: // XORFB
 				if (bit & 1) == 0 {
-					u.PLDs[pld].Macrocells[mc].XORFB = xorfb((config[i] >> uint(bit)) & 3)
+					u.PLDs[pld].Macrocells[mc].XORFB = xorfb((config[i] >> bit) & 3)
 				}
 			case 2: // SET_RESET
-				sr := (config[i] & (1 << uint(bit))) != 0
+				sr := (config[i] & (1 << bit)) != 0
 				if (bit & 1) == 0 {
 					u.PLDs[pld].Macrocells[mc].SSEL = sr
 				} else {
@@ -126,7 +129,7 @@ func ParseConfig(u *UDB, config []byte) error {
 				}
 			case 3: // BYPASS
 				if (bit & 1) == 0 {
-					bypass := (config[i] & (1 << uint(bit))) != 0
+					bypass := (config[i] & (1 << bit)) != 0
 					u.PLDs[pld].Macrocells[mc].BYP = bypass
 				}
 			}
