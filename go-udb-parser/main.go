@@ -72,7 +72,7 @@ type UDB struct {
 	PLDs [NumPLDs]PLD
 }
 
-func ParseConfig(u *UDB, config []byte) error {
+func (u *UDB) LoadConfig(config []byte) error {
 	if len(config) < 0x40 {
 		return errors.New("config data too short")
 	}
@@ -150,7 +150,7 @@ func main() {
 	}
 
 	u := new(UDB)
-	err = ParseConfig(u, config)
+	err = u.LoadConfig(config)
 	if err != nil {
 		log.Fatal(err)
 	}
