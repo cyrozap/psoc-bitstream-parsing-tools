@@ -206,7 +206,7 @@ func (u *UDB) GetVerilog() string {
 	for pld := 0; pld < NumPLDs; pld++ {
 		for mc := 0; mc < NumMacrocells; mc++ {
 			if u.PLDs[pld].Macrocells[mc].COEN {
-				buffer.WriteString(fmt.Sprintf("wire pld%d_mc%d_selout = (pld%d_mc%d_cpt0 & !pld%d_mc%d_selin) | (!pld%d_mc%d_cpt1 & pld%d_mc%d_selin);\n", pld, mc, pld, mc, pld, mc, pld, mc, pld, mc))
+				buffer.WriteString(fmt.Sprintf("wire pld%d_mc%d_selout = pld%d_mc%d_selin ? !pld%d_mc%d_cpt1 : pld%d_mc%d_cpt0;\n", pld, mc, pld, mc, pld, mc, pld, mc))
 			} else {
 				buffer.WriteString(fmt.Sprintf("wire pld%d_mc%d_selout = 1'b0;\n", pld, mc))
 			}
@@ -243,7 +243,7 @@ func (u *UDB) GetVerilog() string {
 	for pld := 0; pld < NumPLDs; pld++ {
 		for mc := 0; mc < NumMacrocells; mc++ {
 			if u.PLDs[pld].Macrocells[mc].BYP {
-				buffer.WriteString(fmt.Sprintf("assign out[%d] = (out%d_reg & !pld_en[%d]) | (out%d_int & pld_en[%d]);\n", pld*4+mc, pld*4+mc, pld, pld*4+mc, pld))
+				buffer.WriteString(fmt.Sprintf("assign out[%d] = pld_en[%d] ? out%d_int : out%d_reg;\n", pld*4+mc, pld, pld*4+mc, pld*4+mc))
 			} else {
 				buffer.WriteString(fmt.Sprintf("assign out[%d] = out%d_reg;\n", pld*4+mc, pld*4+mc))
 			}
