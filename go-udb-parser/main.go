@@ -261,7 +261,7 @@ func (u *UDB) GetVerilog() string {
 			buffer.WriteString(") begin\n")
 
 			if cell.SSEL || cell.RSEL {
-				buffer.WriteString("if reset begin\n")
+				buffer.WriteString("if (reset) begin\n")
 			}
 			if cell.SSEL {
 				buffer.WriteString(fmt.Sprintf("out%d_reg <= 1'b1;\n", pld*4+mc))
