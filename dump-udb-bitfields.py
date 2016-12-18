@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# pld-equation-extractor
+# dump-udb-bitfields.py
 #
 # Copyright (c) 2016, Forest Crossman <cyrozap@gmail.com>
 #

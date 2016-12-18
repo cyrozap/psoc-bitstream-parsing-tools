@@ -1,5 +1,5 @@
 /*
- * go-udb-parser
+ * udb-config-parser
  *
  * Copyright (c) 2016, Forest Crossman <cyrozap@gmail.com>
  *
