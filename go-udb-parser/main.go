@@ -142,22 +142,21 @@ func (u *UDB) LoadConfig(config []byte) error {
 func (u *UDB) GetVerilog() string {
 	var buffer bytes.Buffer
 
-	buffer.WriteString("module UDB();\n")
+	buffer.WriteString("module UDB(\n")
+	buffer.WriteString("input wire clk,\n")
+	buffer.WriteString("input wire reset,\n")
 	buffer.WriteString("\n")
 
-	buffer.WriteString("input wire clk;\n")
-	buffer.WriteString("input wire reset;\n")
+	buffer.WriteString(fmt.Sprintf("input wire [%d:0] pld_en,\n", NumPLDs-1))
+	buffer.WriteString("input wire selin,\n")
 	buffer.WriteString("\n")
 
-	buffer.WriteString(fmt.Sprintf("input wire pld_en[%d:0];\n", NumPLDs-1))
-	buffer.WriteString("input wire selin;\n")
+	buffer.WriteString(fmt.Sprintf("input wire [%d:0] it,\n", NumInputTerms-1))
 	buffer.WriteString("\n")
 
-	buffer.WriteString(fmt.Sprintf("input wire it[%d:0];\n", NumInputTerms-1))
-	buffer.WriteString("\n")
-
-	buffer.WriteString(fmt.Sprintf("output wire out[%d:0];\n", NumMacrocells*NumPLDs-1))
-	buffer.WriteString("output wire selout;\n")
+	buffer.WriteString(fmt.Sprintf("output wire [%d:0] out,\n", NumMacrocells*NumPLDs-1))
+	buffer.WriteString("output wire selout\n")
+	buffer.WriteString(");\n")
 	buffer.WriteString("\n")
 
 	for pld := 0; pld < NumPLDs; pld++ {
